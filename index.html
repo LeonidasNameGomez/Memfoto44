@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MEMFOTO44 - Leonidas Name</title>
 
-    <meta property="og:title" content="MEMFOTO44 - Juego de Memoria">
+    <meta property="og:title" content="MEMFOTO44 - Juego de Memoria fotografica">
     <meta property="og:description" content="¿Qué tan buena es tu memoria fotografica? Encuentra la ubicación de la imagen">
     <meta property="og:image" content="miniatura.jpg">
     <meta property="og:url" content="https://www.leonidasnamegomez.com">
@@ -309,8 +309,11 @@
 
         function compartirJuego() {
             const url = window.location.href;
+            const shareTitle = 'MEMFOTO44 - Juego de Memoria fotografica';
+            const shareText = '¿Qué tan buena es tu memoria fotografica? ¡Encuentra la ubicación!';
+            
             if (navigator.share) {
-                navigator.share({ title: 'MEMFOTO44 - Juego de Memoria', text: '¿Qué tan buena es tu memoria fotografica? ¡Encuentra la ubicación!', url: url }).catch(() => {});
+                navigator.share({ title: shareTitle, text: shareText, url: url }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(url);
                 alert("¡Enlace copiado!");
