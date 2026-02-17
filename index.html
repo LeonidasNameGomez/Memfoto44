@@ -26,6 +26,7 @@
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=944752851835894&ev=PageView&noscript=1"
     /></noscript>
+
     <style>
         :root {
             --color-fondo-app: #F36C21;
@@ -68,6 +69,22 @@
             text-transform: uppercase;
         }
 
+        /* Ventana de Reglas */
+        #modal-reglas {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); background: white; 
+            width: 85%; max-width: 340px; border-radius: 25px; 
+            padding: 25px; z-index: 10000; text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border: 5px solid var(--color-primario);
+        }
+        #modal-reglas h2 { color: var(--color-primario); margin-top: 0; }
+        #modal-reglas ul { text-align: left; font-size: 0.95rem; line-height: 1.5; color: #333; }
+        .overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); z-index: 9999; 
+        }
+
         .stats-juego {
             display: flex; justify-content: space-around; width: 92%;
             color: white; font-weight: bold; margin: 5px 0; font-size: 0.9rem;
@@ -87,31 +104,43 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             box-sizing: border-box;
         }
-
         .celda img { width: 100%; height: 100%; object-fit: cover; }
-        
         .celda .texto-ocho { 
             font-weight: 900; color: var(--color-primario); 
             font-size: 0.8rem; text-align: center; line-height: 1.1;
             background: white; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
         }
-        
         .celda.oculta { background: white; }
-        .celda.oculta::after {
-            content: "?"; font-size: 2.2rem; color: var(--color-primario); font-weight: bold;
-        }
+        .celda.oculta::after { content: "?"; font-size: 2.2rem; color: var(--color-primario); font-weight: bold; }
         .celda.oculta > * { display: none; }
 
+        /* AJUSTE PARA MANTENER POSICIÓN FIJA */
+        #objetivo-contenedor {
+            width: 100%;
+            height: 160px; /* Tamaño fijo para que no empuje los botones */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 5px 0;
+        }
+
+        #texto-pregunta {
+            margin: 0 0 5px 0; color: white; font-size: 1rem; font-weight: bold;
+            visibility: hidden; /* Ocupa espacio pero no se ve hasta el final */
+        }
+
         .item-objetivo {
-            width: 160px; height: 160px; background: white; border: 5px solid white; 
-            border-radius: 20px; margin: 10px auto; display: none;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            width: 120px; height: 120px; background: white; border: 4px solid white; 
+            border-radius: 15px; display: flex; align-items: center; 
+            justify-content: center; overflow: hidden;
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
             box-sizing: border-box;
+            visibility: hidden; /* Ocupa espacio pero no se ve hasta el final */
         }
         .item-objetivo img { width: 100%; height: 100%; object-fit: cover; }
-        .item-objetivo span { color: var(--color-primario); font-weight: 900; font-size: 1.6rem; text-align: center; }
+        .item-objetivo span { color: var(--color-primario); font-weight: 900; font-size: 1.2rem; text-align: center; }
 
         #indicador-fase {
             background: rgba(0,0,0,0.2); color: white; padding: 4px 15px;
@@ -131,7 +160,6 @@
             border-radius: 18px; text-transform: uppercase; padding: 12px;
             cursor: pointer;
         }
-
         .btn-full { width: 92%; max-width: 400px; }
         .btn-half { flex: 1; }
 
@@ -150,12 +178,23 @@
             border-radius: 20px; z-index: 5000; text-align: center; 
             width: 80%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        #mensaje-victoria h2, #mensaje-error h2 { color: var(--color-primario); margin-top: 0; }
     </style>
 </head>
 <body onclick="iniciarMusica()">
 
     <audio id="musicaFondo" loop><source src="Version 2 Final.mp3" type="audio/mpeg"></audio>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="modal-reglas">
+        <h2>REGLAS DEL JUEGO</h2>
+        <ul>
+            <li>Tienes <b>5 segundos</b> para memorizar la ubicación de todas las imágenes.</li>
+            <li>Luego, las imágenes se ocultarán y aparecerá un <b>objetivo</b>.</li>
+            <li>Debes tocar la casilla donde estaba esa imagen.</li>
+            <li>Si aciertas, tu racha sube. Si fallas, ¡vuelves a cero!</li>
+        </ul>
+        <button class="btn-full" onclick="cerrarReglas()">¡ENTENDIDO!</button>
+    </div>
 
     <div id="mensaje-victoria">
         <h2>✨ ¡ACERTASTE! ✨</h2>
@@ -180,7 +219,7 @@
         <div style="flex: 1;"></div>
         <div class="contenedor-inferior">
             <div style="color: white; margin-bottom: 15px; font-weight: bold; font-size: 1.1rem;">Récord: <span id="record-menu">0</span></div>
-            <button class="btn-full" onclick="iniciarJuego()" style="margin-bottom: 20px; border-radius: 12px;">Iniciar Juego</button>
+            <button class="btn-full" onclick="mostrarReglas()" style="margin-bottom: 20px; border-radius: 12px;">Iniciar Juego</button>
             <a href="https://www.leonidasnamegomez.com" target="_blank" style="color:white; text-decoration:none; font-size:0.85rem; margin-bottom:10px;">www.leonidasnamegomez.com</a>
         </div>
         <div class="banner-politico"></div>
@@ -188,18 +227,16 @@
 
     <div id="pantalla-juego" class="pantalla" style="display: none;">
         <div class="cabecera-titulo"><h1 class="texto-sombra">MEMFOTO44</h1></div>
-        
         <div class="stats-juego">
             <div>Racha: <span id="racha-actual">0</span></div>
             <div>Récord: <span id="record-juego">0</span></div>
         </div>
-
-        <div id="indicador-fase">¡MEMORIZA! (5s)</div>
+        <div id="indicador-fase">MEMORIZA 5s</div>
         <div id="tablero-memfoto"></div>
 
         <div id="objetivo-contenedor">
-            <p id="texto-pregunta" style="display:none; margin: 2px 0; color:white; font-size: 1rem; font-weight: bold;">¿DÓNDE ESTABA ESTO?</p>
-            <div id="item-objetivo" class="item-objetivo" style="display:none;"></div>
+            <p id="texto-pregunta">¿DÓNDE ESTABA ESTO?</p>
+            <div id="item-objetivo" class="item-objetivo"></div>
         </div>
 
         <div class="contenedor-inferior">
@@ -208,7 +245,6 @@
                 <button class="btn-half" onclick="nuevaRonda()">REINICIAR</button>
             </div>
             <button class="btn-full" onclick="compartirJuego()">COMPARTIR JUEGO</button>
-            
             <a href="https://www.leonidasnamegomez.com" target="_blank" style="color:white; text-decoration:none; font-size:0.85rem; margin-top:10px;">www.leonidasnamegomez.com</a>
         </div>
         <div class="banner-politico"></div>
@@ -220,6 +256,7 @@
         let juegoBloqueado = true;
         let musicaIniciada = false;
         let racha = 0;
+        let intervaloCrono;
 
         function iniciarMusica() { if (!musicaIniciada) { document.getElementById('musicaFondo').play().catch(() => {}); musicaIniciada = true; } }
 
@@ -227,6 +264,17 @@
             const record = localStorage.getItem('recordMemfoto44') || 0;
             document.getElementById('record-menu').innerText = record;
         };
+
+        function mostrarReglas() {
+            document.getElementById('modal-reglas').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function cerrarReglas() {
+            document.getElementById('modal-reglas').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            iniciarJuego();
+        }
 
         function iniciarJuego() {
             document.getElementById('pantalla-menu').style.display = 'none';
@@ -243,11 +291,17 @@
         }
 
         function nuevaRonda() {
+            clearInterval(intervaloCrono);
             document.getElementById('mensaje-victoria').style.display = 'none';
             document.getElementById('mensaje-error').style.display = 'none';
-            document.getElementById('item-objetivo').style.display = 'none';
-            document.getElementById('texto-pregunta').style.display = 'none';
-            document.getElementById('indicador-fase').innerText = "¡MEMORIZA! (5s)";
+            
+            // Ocultamos el objetivo al iniciar la ronda pero mantenemos el espacio
+            document.getElementById('item-objetivo').style.visibility = 'hidden';
+            document.getElementById('texto-pregunta').style.visibility = 'hidden';
+            
+            let tiempoRestante = 5;
+            const indicador = document.getElementById('indicador-fase');
+            indicador.innerText = `MEMORIZA ${tiempoRestante}s`;
             juegoBloqueado = true;
 
             let mazo = imagenes.map(img => ({ tipo: 'img', valor: img }));
@@ -270,16 +324,29 @@
             const objetivo = mazo[Math.floor(Math.random() * mazo.length)];
             itemCorrecto = objetivo.valor;
 
-            setTimeout(() => {
-                document.querySelectorAll('.celda').forEach(c => c.classList.add('oculta'));
-                document.getElementById('indicador-fase').innerText = "¡ENCUÉNTRALO!";
-                const objContainer = document.getElementById('item-objetivo');
-                if(objetivo.tipo === 'img') { objContainer.innerHTML = `<img src="${objetivo.valor}">`; } 
-                else { objContainer.innerHTML = `<span>8 DE MARZO</span>`; }
-                objContainer.style.display = 'flex';
-                document.getElementById('texto-pregunta').style.display = 'block';
-                juegoBloqueado = false;
-            }, 5000);
+            intervaloCrono = setInterval(() => {
+                tiempoRestante--;
+                if (tiempoRestante > 0) {
+                    indicador.innerText = `MEMORIZA ${tiempoRestante}s`;
+                } else {
+                    clearInterval(intervaloCrono);
+                    finalizarMemorizacion(objetivo);
+                }
+            }, 1000);
+        }
+
+        function finalizarMemorizacion(objetivo) {
+            document.querySelectorAll('.celda').forEach(c => c.classList.add('oculta'));
+            document.getElementById('indicador-fase').innerText = "¡ENCUÉNTRALO!";
+            
+            const objContainer = document.getElementById('item-objetivo');
+            if(objetivo.tipo === 'img') { objContainer.innerHTML = `<img src="${objetivo.valor}">`; } 
+            else { objContainer.innerHTML = `<span>8 DE MARZO</span>`; }
+            
+            // Hacemos visible el objetivo sin mover nada
+            objContainer.style.visibility = 'visible';
+            document.getElementById('texto-pregunta').style.visibility = 'visible';
+            juegoBloqueado = false;
         }
 
         function verificarRespuesta(celda) {
@@ -304,7 +371,6 @@
             const url = window.location.href;
             const shareTitle = 'MEMFOTO44 - Juego de Memoria fotografica';
             const shareText = '¿Qué tan buena es tu memoria fotografica? ¡Encuentra la ubicación!';
-            
             if (navigator.share) {
                 navigator.share({ title: shareTitle, text: shareText, url: url }).catch(() => {});
             } else {
