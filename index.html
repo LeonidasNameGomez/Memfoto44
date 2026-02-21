@@ -11,6 +11,14 @@
     <meta property="og:url" content="https://leonidasnamegomez.github.io/Foto44/">
     <meta property="og:type" content="website">
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q2VTFNY8K1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q2VTFNY8K1');
+    </script>
+
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -140,7 +148,6 @@
         .item-objetivo img { width: 100%; height: 100%; object-fit: cover; }
         .item-objetivo span { color: var(--color-primario); font-weight: 900; font-size: 1.2rem; text-align: center; }
 
-        /* Estilo actualizado para el indicador de fase con salto de línea */
         #indicador-fase {
             background: rgba(0,0,0,0.2); color: white; padding: 8px 20px;
             border-radius: 15px; font-weight: bold; margin-top: 5px; font-size: 0.85rem;
@@ -279,6 +286,9 @@
         }
 
         function iniciarJuego() {
+            // EVENTO ANALYTICS: Juego Iniciado
+            gtag('event', 'juego_iniciado', { 'nombre_juego': 'Foto44' });
+
             document.getElementById('pantalla-menu').style.display = 'none';
             document.getElementById('pantalla-juego').style.display = 'flex';
             racha = 0;
@@ -302,7 +312,6 @@
             
             let tiempoRestante = 5;
             const indicador = document.getElementById('indicador-fase');
-            // Formato inicial solicitado
             indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
             juegoBloqueado = true;
 
@@ -329,7 +338,6 @@
             intervaloCrono = setInterval(() => {
                 tiempoRestante--;
                 if (tiempoRestante > 0) {
-                    // Actualización del tiempo restante
                     indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
                 } else {
                     clearInterval(intervaloCrono);
@@ -360,6 +368,10 @@
                 const recordActual = localStorage.getItem('recordFoto44') || 0;
                 if (racha > recordActual) { localStorage.setItem('recordFoto44', racha); }
                 actualizarStats();
+                
+                // EVENTO ANALYTICS: Acierto
+                gtag('event', 'acierto', { 'nombre_juego': 'Foto44', 'racha_actual': racha });
+
                 setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 500);
             } else {
                 racha = 0;
@@ -370,7 +382,10 @@
         }
 
         function compartirJuego() {
-            const url = window.location.href;
+            // EVENTO ANALYTICS: Compartir
+            gtag('event', 'juego_compartido', { 'nombre_juego': 'Foto44' });
+
+            const url = "https://leonidasnamegomez.github.io/Foto44/";
             const shareTitle = 'FOTO44 - Juego de Memoria fotográfica';
             const shareText = '¿Qué tan buena es tu memoria fotográfica? ¡Encuentra la ubicación!';
             if (navigator.share) {
