@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MEMFOTO44 - Leonidas Name</title>
+    <title>FOTO44 - Leonidas Name</title>
 
-    <meta property="og:title" content="MEMFOTO44 - Juego de Memoria fotografica">
-    <meta property="og:description" content="¿Qué tan buena es tu memoria fotografica? Encuentra la ubicación de la imagen">
-    <meta property="og:image" content="https://leonidasnamegomez.github.io/Memfoto44/miniatura.jpg">
-    <meta property="og:url" content="https://leonidasnamegomez.github.io/Memfoto44/">
+    <meta property="og:title" content="FOTO44 - Juego de Memoria fotográfica">
+    <meta property="og:description" content="¿Qué tan buena es tu memoria fotográfica? Encuentra la ubicación de la imagen">
+    <meta property="og:image" content="https://leonidasnamegomez.github.io/Foto44/miniatura.jpg">
+    <meta property="og:url" content="https://leonidasnamegomez.github.io/Foto44/">
     <meta property="og:type" content="website">
 
     <script>
@@ -69,7 +69,6 @@
             text-transform: uppercase;
         }
 
-        /* Ventana de Reglas */
         #modal-reglas {
             display: none; position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); background: white; 
@@ -91,7 +90,7 @@
             background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px;
         }
 
-        #tablero-memfoto {
+        #tablero-foto {
             display: grid; grid-template-columns: repeat(4, 1fr);
             gap: 10px; width: 92%; max-width: 400px; margin: 10px auto;
         }
@@ -115,10 +114,9 @@
         .celda.oculta::after { content: "?"; font-size: 2.2rem; color: var(--color-primario); font-weight: bold; }
         .celda.oculta > * { display: none; }
 
-        /* AJUSTE PARA MANTENER POSICIÓN FIJA */
         #objetivo-contenedor {
             width: 100%;
-            height: 160px; /* Tamaño fijo para que no empuje los botones */
+            height: 160px; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -128,7 +126,7 @@
 
         #texto-pregunta {
             margin: 0 0 5px 0; color: white; font-size: 1rem; font-weight: bold;
-            visibility: hidden; /* Ocupa espacio pero no se ve hasta el final */
+            visibility: hidden; 
         }
 
         .item-objetivo {
@@ -137,14 +135,16 @@
             justify-content: center; overflow: hidden;
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
             box-sizing: border-box;
-            visibility: hidden; /* Ocupa espacio pero no se ve hasta el final */
+            visibility: hidden; 
         }
         .item-objetivo img { width: 100%; height: 100%; object-fit: cover; }
         .item-objetivo span { color: var(--color-primario); font-weight: 900; font-size: 1.2rem; text-align: center; }
 
+        /* Estilo actualizado para el indicador de fase con salto de línea */
         #indicador-fase {
-            background: rgba(0,0,0,0.2); color: white; padding: 4px 15px;
-            border-radius: 20px; font-weight: bold; margin-top: 5px; font-size: 0.8rem;
+            background: rgba(0,0,0,0.2); color: white; padding: 8px 20px;
+            border-radius: 15px; font-weight: bold; margin-top: 5px; font-size: 0.85rem;
+            text-align: center; line-height: 1.3;
         }
 
         .contenedor-inferior {
@@ -186,7 +186,7 @@
 
     <div class="overlay" id="overlay"></div>
     <div id="modal-reglas">
-        <h2>🧩 REGLAS DE MEMFOTO44</h2>
+        <h2>🧩 REGLAS DE FOTO44</h2>
         <ul>
             <li>Tienes <b>5 segundos</b> para memorizar la ubicación de todas las imágenes.</li>
             <li>Luego, las imágenes se ocultarán y aparecerá un <b>objetivo</b>.</li>
@@ -211,11 +211,11 @@
     </div>
 
     <div id="pantalla-carga" class="pantalla">
-        <p class="texto-carga-inferior">CARGANDO MEMFOTO44...</p>
+        <p class="texto-carga-inferior">CARGANDO FOTO44...</p>
     </div>
 
     <div id="pantalla-menu" class="pantalla" style="display: none;">
-        <div class="cabecera-titulo"><h1 class="texto-sombra">MEMFOTO44</h1></div>
+        <div class="cabecera-titulo"><h1 class="texto-sombra">FOTO44</h1></div>
         <div style="flex: 1;"></div>
         <div class="contenedor-inferior">
             <div style="color: white; margin-bottom: 15px; font-weight: bold; font-size: 1.1rem;">Récord: <span id="record-menu">0</span></div>
@@ -226,13 +226,15 @@
     </div>
 
     <div id="pantalla-juego" class="pantalla" style="display: none;">
-        <div class="cabecera-titulo"><h1 class="texto-sombra">MEMFOTO44</h1></div>
+        <div class="cabecera-titulo"><h1 class="texto-sombra">FOTO44</h1></div>
         <div class="stats-juego">
             <div>Racha: <span id="racha-actual">0</span></div>
             <div>Récord: <span id="record-juego">0</span></div>
         </div>
-        <div id="indicador-fase">MEMORIZA 5s</div>
-        <div id="tablero-memfoto"></div>
+        
+        <div id="indicador-fase">MEMORIZA<br>Tiempo restante: 5s</div>
+        
+        <div id="tablero-foto"></div>
 
         <div id="objetivo-contenedor">
             <p id="texto-pregunta">¿DÓNDE ESTABA ESTO?</p>
@@ -261,7 +263,7 @@
         function iniciarMusica() { if (!musicaIniciada) { document.getElementById('musicaFondo').play().catch(() => {}); musicaIniciada = true; } }
 
         window.onload = () => {
-            const record = localStorage.getItem('recordMemfoto44') || 0;
+            const record = localStorage.getItem('recordFoto44') || 0;
             document.getElementById('record-menu').innerText = record;
         };
 
@@ -285,7 +287,7 @@
         }
 
         function actualizarStats() {
-            const record = localStorage.getItem('recordMemfoto44') || 0;
+            const record = localStorage.getItem('recordFoto44') || 0;
             document.getElementById('racha-actual').innerText = racha;
             document.getElementById('record-juego').innerText = record;
         }
@@ -295,20 +297,20 @@
             document.getElementById('mensaje-victoria').style.display = 'none';
             document.getElementById('mensaje-error').style.display = 'none';
             
-            // Ocultamos el objetivo al iniciar la ronda pero mantenemos el espacio
             document.getElementById('item-objetivo').style.visibility = 'hidden';
             document.getElementById('texto-pregunta').style.visibility = 'hidden';
             
             let tiempoRestante = 5;
             const indicador = document.getElementById('indicador-fase');
-            indicador.innerText = `MEMORIZA ${tiempoRestante}s`;
+            // Formato inicial solicitado
+            indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
             juegoBloqueado = true;
 
             let mazo = imagenes.map(img => ({ tipo: 'img', valor: img }));
             mazo.push({ tipo: 'txt', valor: '8 DE MARZO' });
             mazo.sort(() => Math.random() - 0.5);
 
-            const tablero = document.getElementById('tablero-memfoto');
+            const tablero = document.getElementById('tablero-foto');
             tablero.innerHTML = '';
 
             mazo.forEach((item) => {
@@ -327,7 +329,8 @@
             intervaloCrono = setInterval(() => {
                 tiempoRestante--;
                 if (tiempoRestante > 0) {
-                    indicador.innerText = `MEMORIZA ${tiempoRestante}s`;
+                    // Actualización del tiempo restante
+                    indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
                 } else {
                     clearInterval(intervaloCrono);
                     finalizarMemorizacion(objetivo);
@@ -343,7 +346,6 @@
             if(objetivo.tipo === 'img') { objContainer.innerHTML = `<img src="${objetivo.valor}">`; } 
             else { objContainer.innerHTML = `<span>8 DE MARZO</span>`; }
             
-            // Hacemos visible el objetivo sin mover nada
             objContainer.style.visibility = 'visible';
             document.getElementById('texto-pregunta').style.visibility = 'visible';
             juegoBloqueado = false;
@@ -355,8 +357,8 @@
             celda.classList.remove('oculta');
             if (celda.dataset.valor === itemCorrecto) {
                 racha++;
-                const recordActual = localStorage.getItem('recordMemfoto44') || 0;
-                if (racha > recordActual) { localStorage.setItem('recordMemfoto44', racha); }
+                const recordActual = localStorage.getItem('recordFoto44') || 0;
+                if (racha > recordActual) { localStorage.setItem('recordFoto44', racha); }
                 actualizarStats();
                 setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 500);
             } else {
@@ -369,8 +371,8 @@
 
         function compartirJuego() {
             const url = window.location.href;
-            const shareTitle = 'MEMFOTO44 - Juego de Memoria fotografica';
-            const shareText = '¿Qué tan buena es tu memoria fotografica? ¡Encuentra la ubicación!';
+            const shareTitle = 'FOTO44 - Juego de Memoria fotográfica';
+            const shareText = '¿Qué tan buena es tu memoria fotográfica? ¡Encuentra la ubicación!';
             if (navigator.share) {
                 navigator.share({ title: shareTitle, text: shareText, url: url }).catch(() => {});
             } else {
