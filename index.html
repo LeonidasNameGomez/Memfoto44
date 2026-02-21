@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FOTO44 - Leonidas Name</title>
-
-    <meta property="og:title" content="FOTO44 - Juego de Memoria fotográfica">
-    <meta property="og:description" content="¿Qué tan buena es tu memoria fotográfica? Encuentra la ubicación de la imagen">
-    <meta property="og:image" content="https://leonidasnamegomez.github.io/Foto44/miniatura.jpg">
-    <meta property="og:url" content="https://leonidasnamegomez.github.io/Foto44/">
-    <meta property="og:type" content="website">
-
+    <title>SUDO44 - Leonidas Name</title>
+    
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -23,15 +17,13 @@
     fbq('init', '944752851835894');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=944752851835894&ev=PageView&noscript=1"
-    /></noscript>
-
     <style>
         :root {
             --color-fondo-app: #F36C21;
             --fuente-global: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --color-texto-numeros: #F36C21; 
             --color-primario: #F36C21; 
+            --rojo-error: #ffcccc;
         }
 
         body, html { 
@@ -44,10 +36,11 @@
             width: 100%; height: 100dvh; display: flex; 
             flex-direction: column; align-items: center; position: absolute;
             background-color: var(--color-fondo-app); box-sizing: border-box;
+            background-size: contain; background-position: center; background-repeat: no-repeat;
         }
 
-        #pantalla-carga { background-image: url('fondo.jpeg'); background-size: contain; background-position: center; background-repeat: no-repeat; justify-content: flex-start; }
-        #pantalla-menu { background-image: url('fondo 2.jpeg'); background-size: contain; background-position: center; background-repeat: no-repeat; }
+        #pantalla-carga { background-image: url('fondo.jpeg'); justify-content: flex-start; }
+        #pantalla-menu { background-image: url('fondo 2.jpeg'); }
 
         .texto-carga-inferior {
             font-size: 1.1rem; font-weight: bold; color: white;
@@ -66,117 +59,102 @@
         .texto-sombra {
             text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
             font-weight: 800; color: white; margin: 0; font-size: 1.8rem;
-            text-transform: uppercase;
         }
 
-        #modal-reglas {
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); background: white; 
-            width: 85%; max-width: 340px; border-radius: 25px; 
-            padding: 25px; z-index: 10000; text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            border: 5px solid var(--color-primario);
+        .modal-reglas {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center;
         }
-        #modal-reglas h2 { color: var(--color-primario); margin-top: 0; }
-        #modal-reglas ul { text-align: left; font-size: 0.95rem; line-height: 1.5; color: #333; }
-        .overlay { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); z-index: 9999; 
+        .contenido-modal {
+            background: white; width: 85%; max-width: 320px; padding: 20px;
+            border-radius: 20px; text-align: center; border: 4px solid var(--color-primario);
         }
 
-        .stats-juego {
-            display: flex; justify-content: space-around; width: 92%;
-            color: white; font-weight: bold; margin: 5px 0; font-size: 0.9rem;
-            background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px;
+        .img-reglas {
+            width: 120px; height: auto; border-radius: 10px; 
+            margin: 10px 0; border: 2px solid #000;
         }
 
-        #tablero-foto {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 10px; width: 92%; max-width: 400px; margin: 10px auto;
+        /* Estilo para el nuevo texto recordatorio */
+        .recordatorio-suma {
+            color: white; font-size: 0.85rem; font-weight: bold;
+            margin: 5px 0 12px 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
 
-        .celda {
-            aspect-ratio: 1 / 1; background: white; border-radius: 12px;
-            position: relative; overflow: hidden;
+        .contenedor-numeros {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 4px; padding: 6px; background: rgba(255,255,255,0.2);
+            border-radius: 12px; margin: 15px 0 8px 0; width: 85%; border: 1px solid white;
+        }
+
+        .num-disponible {
+            width: 22px; height: 22px; background: white; color: var(--color-primario);
             display: flex; align-items: center; justify-content: center;
-            border: 4px solid white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 5px; font-weight: bold; font-size: 0.7rem;
+        }
+
+        .num-usado { background: rgba(0,0,0,0.4) !important; color: rgba(255,255,255,0.4) !important; text-decoration: line-through; }
+
+        #tablero-contenedor { 
+            display: grid; grid-template-columns: repeat(4, 1fr); 
+            width: 88%; max-width: 300px; gap: 5px; padding: 10px; 
+            background-color: rgba(255,255,255,0.15); border-radius: 15px; 
+            margin: 0 auto; position: relative;
+            border: 4px solid #000000;
             box-sizing: border-box;
         }
-        .celda img { width: 100%; height: 100%; object-fit: cover; }
-        .celda .texto-ocho { 
-            font-weight: 900; color: var(--color-primario); 
-            font-size: 0.8rem; text-align: center; line-height: 1.1;
-            background: white; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .celda.oculta { background: white; }
-        .celda.oculta::after { content: "?"; font-size: 2.2rem; color: var(--color-primario); font-weight: bold; }
-        .celda.oculta > * { display: none; }
 
-        #objetivo-contenedor {
-            width: 100%;
-            height: 160px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 0;
+        #tablero-contenedor::before {
+            content: ""; position: absolute; top: 0; bottom: 0;
+            left: 50%; width: 4px; background-color: #000000;
+            transform: translateX(-50%); z-index: 5; pointer-events: none;
         }
 
-        #texto-pregunta {
-            margin: 0 0 5px 0; color: white; font-size: 1rem; font-weight: bold;
-            visibility: hidden; 
+        #tablero-contenedor::after {
+            content: ""; position: absolute; left: 0; right: 0;
+            top: 50%; height: 4px; background-color: #000000;
+            transform: translateY(-50%); z-index: 5; pointer-events: none;
+        }
+        
+        .celda-sudoku {
+            width: 100%; aspect-ratio: 1 / 1; background-color: white; 
+            border: none; font-size: 1.3rem; font-weight: bold; 
+            color: var(--color-texto-numeros); border-radius: 8px; 
+            text-align: center; box-sizing: border-box; z-index: 1;
         }
 
-        .item-objetivo {
-            width: 120px; height: 120px; background: white; border: 4px solid white; 
-            border-radius: 15px; display: flex; align-items: center; 
-            justify-content: center; overflow: hidden;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-            box-sizing: border-box;
-            visibility: hidden; 
-        }
-        .item-objetivo img { width: 100%; height: 100%; object-fit: cover; }
-        .item-objetivo span { color: var(--color-primario); font-weight: 900; font-size: 1.2rem; text-align: center; }
+        .celda-error { background-color: var(--rojo-error) !important; color: #d32f2f !important; }
 
-        /* Estilo actualizado para el indicador de fase con salto de línea */
-        #indicador-fase {
-            background: rgba(0,0,0,0.2); color: white; padding: 8px 20px;
-            border-radius: 15px; font-weight: bold; margin-top: 5px; font-size: 0.85rem;
-            text-align: center; line-height: 1.3;
+        .enlace-web {
+            position: absolute; bottom: calc(72px + env(safe-area-inset-bottom)); 
+            color: white; text-decoration: none; font-weight: bold; font-size: 0.8rem; z-index: 20;
         }
-
-        .contenedor-inferior {
-            width: 100%; display: flex; flex-direction: column; align-items: center;
-            margin-top: auto; padding-bottom: calc(75px + env(safe-area-inset-bottom));
-        }
-
-        .fila-botones { display: flex; gap: 8px; width: 92%; max-width: 400px; margin-bottom: 8px; }
-
-        button { 
-            background-color: var(--color-primario); color: white; 
-            font-size: 0.9rem; font-weight: 700; border: 2.5px solid white; 
-            border-radius: 18px; text-transform: uppercase; padding: 12px;
-            cursor: pointer;
-        }
-        .btn-full { width: 92%; max-width: 400px; }
-        .btn-half { flex: 1; }
 
         .banner-politico {
-            position: absolute; bottom: 0; width: 100%; 
-            height: calc(68px + env(safe-area-inset-bottom)); 
+            position: absolute; bottom: 0; width: 100%; height: calc(68px + env(safe-area-inset-bottom)); 
             background-image: url('banner.jpeg'); background-size: contain; 
             background-position: center top; background-repeat: no-repeat;
-            background-color: #F37021; border-top: 1px solid white; z-index: 10;
+            background-color: #F37021; border-top: 1px solid white;
         }
 
-        #mensaje-victoria, #mensaje-error {
+        #mensaje-victoria {
             display: none; position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); background: white; 
             border: 5px solid var(--color-primario); padding: 25px; 
-            border-radius: 20px; z-index: 5000; text-align: center; 
+            border-radius: 20px; z-index: 4000; text-align: center; 
             width: 80%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        button { 
+            width: 85%; max-width: 300px; padding: 12px; margin: 4px 0; 
+            background-color: var(--color-primario); color: white; 
+            font-size: 1rem; font-weight: 700; border: 2px solid white; 
+            border-radius: 12px; text-transform: uppercase;
+        }
+
+        .area-controles {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%; margin-top: 10px; padding-bottom: 120px; 
         }
     </style>
 </head>
@@ -184,206 +162,180 @@
 
     <audio id="musicaFondo" loop><source src="Version 2 Final.mp3" type="audio/mpeg"></audio>
 
-    <div class="overlay" id="overlay"></div>
-    <div id="modal-reglas">
-        <h2>🧩 REGLAS DE FOTO44</h2>
-        <ul>
-            <li>Tienes <b>5 segundos</b> para memorizar la ubicación de todas las imágenes.</li>
-            <li>Luego, las imágenes se ocultarán y aparecerá un <b>objetivo</b>.</li>
-            <li>Debes tocar la casilla donde estaba esa imagen.</li>
-            <li>Si aciertas, tu racha sube. Si fallas, ¡vuelves a cero!</li>
-        </ul>
-        <button class="btn-full" onclick="cerrarReglas()">¡ENTENDIDO!</button>
+    <div id="modal-reglas" class="modal-reglas">
+        <div class="contenido-modal">
+            <h3 style="margin-top: 0;">🧩 REGLAS DE SUDO44</h3>
+            <p style="font-size: 0.9rem; text-align: left; margin-bottom: 5px;">1. Usa números del <b>1 al 20</b> sin repetir.</p>
+            <p style="font-size: 0.9rem; text-align: left; margin-bottom: 5px;">2. El tablero tiene <b>4 cuadrantes</b>.</p>
+            <img src="cuadrantes.jpg" alt="Cuadrantes" class="img-reglas">
+            <p style="font-size: 0.9rem; text-align: left;">3. Cada <b>cuadrante de 2x2</b> debe sumar exactamente <b>44</b>.</p>
+            <button onclick="cerrarReglas()" style="width: 100%; margin-top: 10px;">¡ENTENDIDO!</button>
+        </div>
     </div>
 
     <div id="mensaje-victoria">
-        <h2>✨ ¡ACERTASTE! ✨</h2>
-        <p>Tu memoria visual está muy afilada.</p>
+        <h2 style="color: var(--color-primario); margin-top: 0;">✨ ¡Felicitaciones! ✨</h2>
+        <p>Has completado el reto.</p>
         <p style="font-weight: bold; font-size: 0.95rem;">Recuerda el próximo 8 de marzo votar por el Frente Amplio Unitario #44</p>
-        <button class="btn-full" onclick="nuevaRonda()">SIGUIENTE</button>
-        <button class="btn-full" style="margin-top:8px;" onclick="compartirJuego()">COMPARTIR JUEGO</button>
-    </div>
-
-    <div id="mensaje-error">
-        <h2>¡FALLASTE!</h2>
-        <p>La racha ha vuelto a cero.</p>
-        <button class="btn-full" onclick="nuevaRonda()">REINTENTAR</button>
+        <button onclick="location.reload()" style="margin-top: 10px;">JUGAR DE NUEVO</button>
+        <button onclick="compartirJuego()" style="margin-top: 8px;">COMPARTIR JUEGO</button>
     </div>
 
     <div id="pantalla-carga" class="pantalla">
-        <p class="texto-carga-inferior">CARGANDO FOTO44...</p>
+        <p class="texto-carga-inferior">CARGANDO EL RETO...</p>
     </div>
 
     <div id="pantalla-menu" class="pantalla" style="display: none;">
-        <div class="cabecera-titulo"><h1 class="texto-sombra">FOTO44</h1></div>
-        <div style="flex: 1;"></div>
-        <div class="contenedor-inferior">
-            <div style="color: white; margin-bottom: 15px; font-weight: bold; font-size: 1.1rem;">Récord: <span id="record-menu">0</span></div>
-            <button class="btn-full" onclick="mostrarReglas()" style="margin-bottom: 20px; border-radius: 12px;">Iniciar Juego</button>
-            <a href="https://www.leonidasnamegomez.com" target="_blank" style="color:white; text-decoration:none; font-size:0.85rem; margin-bottom:10px;">www.leonidasnamegomez.com</a>
+        <div class="cabecera-titulo"><h1 class="texto-sombra">SUDO44</h1></div>
+        <div style="position: absolute; bottom: calc(115px + env(safe-area-inset-bottom)); width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <button onclick="iniciarJuego()">Iniciar Juego</button>
+            <select id="dificultad" style="width:85%; max-width:300px; padding:12px; border-radius:10px; margin-top:5px; font-weight:bold; border: 2px solid white; background: white; color: var(--color-primario);">
+                <option value="40">Nivel Fácil</option>
+                <option value="60">Nivel Medio</option>
+                <option value="80">Nivel Difícil</option>
+            </select>
         </div>
+        <a href="https://www.leonidasnamegomez.com" target="_blank" class="enlace-web">www.leonidasnamegomez.com</a>
         <div class="banner-politico"></div>
     </div>
 
     <div id="pantalla-juego" class="pantalla" style="display: none;">
-        <div class="cabecera-titulo"><h1 class="texto-sombra">FOTO44</h1></div>
-        <div class="stats-juego">
-            <div>Racha: <span id="racha-actual">0</span></div>
-            <div>Récord: <span id="record-juego">0</span></div>
-        </div>
+        <div class="cabecera-titulo"><h1 class="texto-sombra">SUDO44</h1></div>
+        <div id="lista-numeros" class="contenedor-numeros"></div>
         
-        <div id="indicador-fase">MEMORIZA<br>Tiempo restante: 5s</div>
+        <div class="recordatorio-suma">Recuerda que cada cuadrante debe sumar 44</div>
         
-        <div id="tablero-foto"></div>
-
-        <div id="objetivo-contenedor">
-            <p id="texto-pregunta">¿DÓNDE ESTABA ESTO?</p>
-            <div id="item-objetivo" class="item-objetivo"></div>
-        </div>
-
-        <div class="contenedor-inferior">
-            <div class="fila-botones">
-                <button class="btn-half" onclick="location.reload()">MENÚ</button>
-                <button class="btn-half" onclick="nuevaRonda()">REINICIAR</button>
+        <div id="tablero-contenedor"></div>
+        
+        <div class="area-controles">
+            <div style="display:flex; gap:10px; width:90%; justify-content:center;">
+                <button onclick="location.reload()" style="width:48%; font-size: 0.85rem; padding: 10px;">Menú</button>
+                <button onclick="limpiarUsuario()" style="width:48%; font-size: 0.85rem; padding: 10px;">Limpiar</button>
             </div>
-            <button class="btn-full" onclick="compartirJuego()">COMPARTIR JUEGO</button>
-            <a href="https://www.leonidasnamegomez.com" target="_blank" style="color:white; text-decoration:none; font-size:0.85rem; margin-top:10px;">www.leonidasnamegomez.com</a>
+            <button onclick="compartirJuego()" style="width:90%; margin-top: 8px; font-size: 0.85rem; padding: 10px;">COMPARTIR JUEGO</button>
         </div>
+
+        <a href="https://www.leonidasnamegomez.com" target="_blank" class="enlace-web">www.leonidasnamegomez.com</a>
         <div class="banner-politico"></div>
     </div>
 
     <script>
-        const imagenes = ['pareja1.jpg', 'pareja2.jpg', 'pareja3.jpg', 'pareja4.jpg', 'pareja5.jpg', 'pareja6.jpg', 'pareja7.jpg'];
-        let itemCorrecto = "";
-        let juegoBloqueado = true;
+        let tableroFinal = [];
         let musicaIniciada = false;
-        let racha = 0;
-        let intervaloCrono;
 
         function iniciarMusica() { if (!musicaIniciada) { document.getElementById('musicaFondo').play().catch(() => {}); musicaIniciada = true; } }
 
-        window.onload = () => {
-            const record = localStorage.getItem('recordFoto44') || 0;
-            document.getElementById('record-menu').innerText = record;
-        };
-
-        function mostrarReglas() {
-            document.getElementById('modal-reglas').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
-
         function cerrarReglas() {
             document.getElementById('modal-reglas').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-            iniciarJuego();
+        }
+
+        function actualizarUI() {
+            const inputs = document.querySelectorAll('.celda-sudoku');
+            const vals = Array.from(inputs).map(i => parseInt(i.value) || 0);
+            const contenedor = document.getElementById('lista-numeros');
+            contenedor.innerHTML = '';
+            for (let i = 1; i <= 20; i++) {
+                const div = document.createElement('div');
+                div.className = 'num-disponible' + (vals.includes(i) ? ' num-usado' : '');
+                div.innerText = i;
+                contenedor.appendChild(div);
+            }
+            inputs.forEach((input, idx) => {
+                if (input.readOnly) return;
+                const val = parseInt(input.value);
+                if (!val) { input.classList.remove('celda-error'); return; }
+                let error = (vals.filter(v => v === val).length > 1);
+                const f = Math.floor(idx / 4), c = idx % 4;
+                const rF = f - f % 2, rC = c - c % 2;
+                let s = 0, l = 0;
+                for(let i=rF; i<rF+2; i++) {
+                    for(let j=rC; j<rC+2; j++) {
+                        let v = parseInt(inputs[i*4+j].value)||0;
+                        if(v>0){s+=v; l++;}
+                    }
+                }
+                if ((l === 4 && s !== 44) || s > 44) error = true;
+                if (error) input.classList.add('celda-error'); else input.classList.remove('celda-error');
+            });
+            verificarVictoria(vals);
         }
 
         function iniciarJuego() {
             document.getElementById('pantalla-menu').style.display = 'none';
             document.getElementById('pantalla-juego').style.display = 'flex';
-            racha = 0;
-            actualizarStats();
-            nuevaRonda();
-        }
-
-        function actualizarStats() {
-            const record = localStorage.getItem('recordFoto44') || 0;
-            document.getElementById('racha-actual').innerText = racha;
-            document.getElementById('record-juego').innerText = record;
-        }
-
-        function nuevaRonda() {
-            clearInterval(intervaloCrono);
-            document.getElementById('mensaje-victoria').style.display = 'none';
-            document.getElementById('mensaje-error').style.display = 'none';
+            document.getElementById('modal-reglas').style.display = 'flex';
             
-            document.getElementById('item-objetivo').style.visibility = 'hidden';
-            document.getElementById('texto-pregunta').style.visibility = 'hidden';
-            
-            let tiempoRestante = 5;
-            const indicador = document.getElementById('indicador-fase');
-            // Formato inicial solicitado
-            indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
-            juegoBloqueado = true;
-
-            let mazo = imagenes.map(img => ({ tipo: 'img', valor: img }));
-            mazo.push({ tipo: 'txt', valor: '8 DE MARZO' });
-            mazo.sort(() => Math.random() - 0.5);
-
-            const tablero = document.getElementById('tablero-foto');
-            tablero.innerHTML = '';
-
-            mazo.forEach((item) => {
-                const celda = document.createElement('div');
-                celda.className = 'celda';
-                celda.dataset.valor = item.valor;
-                if(item.tipo === 'img') { celda.innerHTML = `<img src="${item.valor}">`; } 
-                else { celda.innerHTML = `<div class="texto-ocho">8 DE<br>MARZO</div>`; }
-                celda.onclick = () => verificarRespuesta(celda);
-                tablero.appendChild(celda);
-            });
-
-            const objetivo = mazo[Math.floor(Math.random() * mazo.length)];
-            itemCorrecto = objetivo.valor;
-
-            intervaloCrono = setInterval(() => {
-                tiempoRestante--;
-                if (tiempoRestante > 0) {
-                    // Actualización del tiempo restante
-                    indicador.innerHTML = `MEMORIZA<br>Tiempo restante: ${tiempoRestante}s`;
-                } else {
-                    clearInterval(intervaloCrono);
-                    finalizarMemorizacion(objetivo);
+            let t = Array.from({length: 4}, () => Array(4).fill(0));
+            const sol = (tab) => {
+                const nums = Array.from({length: 20}, (_, i) => i + 1);
+                for (let f=0; f<4; f++) {
+                    for (let c=0; c<4; c++) {
+                        if (tab[f][c] === 0) {
+                            nums.sort(() => Math.random() - 0.5);
+                            for (let n of nums) {
+                                if (!tab.flat().includes(n)) {
+                                    tab[f][c] = n;
+                                    const rF = f-f%2, rC = c-c%2;
+                                    let s=0, l=0;
+                                    for(let i=rF; i<rF+2; i++) for(let j=rC; j<rC+2; j++) if(tab[i][j]>0){s+=tab[i][j]; l++;}
+                                    if (!(l===4 && s!==44) && s<=44 && sol(tab)) return true;
+                                    tab[f][c] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
                 }
-            }, 1000);
+                return true;
+            };
+            sol(t);
+            tableroFinal = t.flat();
+            const cont = document.getElementById('tablero-contenedor');
+            cont.innerHTML = '';
+            const vis = 16 - Math.floor(16 * (document.getElementById('dificultad').value / 100));
+            let ind = Array.from({length: 16}, (_, i) => i).sort(() => Math.random() - 0.5).slice(0, vis);
+            for (let i = 0; i < 16; i++) {
+                const input = document.createElement('input');
+                input.type = 'number'; input.inputMode = "numeric"; input.className = 'celda-sudoku';
+                if (ind.includes(i)) { 
+                    input.value = tableroFinal[i]; 
+                    input.readOnly = true; 
+                    input.style.backgroundColor = "#F36C21"; 
+                    input.style.color = "white"; 
+                }
+                input.oninput = () => { 
+                    let v = parseInt(input.value);
+                    if(v > 20) input.value = 20; 
+                    if(v < 1) input.value = ''; 
+                    actualizarUI(); 
+                };
+                cont.appendChild(input);
+            }
+            actualizarUI();
         }
 
-        function finalizarMemorizacion(objetivo) {
-            document.querySelectorAll('.celda').forEach(c => c.classList.add('oculta'));
-            document.getElementById('indicador-fase').innerText = "¡ENCUÉNTRALO!";
-            
-            const objContainer = document.getElementById('item-objetivo');
-            if(objetivo.tipo === 'img') { objContainer.innerHTML = `<img src="${objetivo.valor}">`; } 
-            else { objContainer.innerHTML = `<span>8 DE MARZO</span>`; }
-            
-            objContainer.style.visibility = 'visible';
-            document.getElementById('texto-pregunta').style.visibility = 'visible';
-            juegoBloqueado = false;
-        }
-
-        function verificarRespuesta(celda) {
-            if (juegoBloqueado) return;
-            juegoBloqueado = true;
-            celda.classList.remove('oculta');
-            if (celda.dataset.valor === itemCorrecto) {
-                racha++;
-                const recordActual = localStorage.getItem('recordFoto44') || 0;
-                if (racha > recordActual) { localStorage.setItem('recordFoto44', racha); }
-                actualizarStats();
-                setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 500);
-            } else {
-                racha = 0;
-                celda.style.backgroundColor = "rgba(255,255,255,0.4)";
-                actualizarStats();
-                setTimeout(() => { document.getElementById('mensaje-error').style.display = 'block'; }, 500);
+        function verificarVictoria(vals) {
+            const s = [vals[0]+vals[1]+vals[4]+vals[5], vals[2]+vals[3]+vals[6]+vals[7], vals[8]+vals[9]+vals[12]+vals[13], vals[10]+vals[11]+vals[14]+vals[15]];
+            if (vals.every(v => v > 0) && s.every(x => x === 44) && new Set(vals.filter(v => v > 0)).size === 16) {
+                document.getElementById('mensaje-victoria').style.display = 'block';
             }
         }
 
-        function compartirJuego() {
-            const url = window.location.href;
-            const shareTitle = 'FOTO44 - Juego de Memoria fotográfica';
-            const shareText = '¿Qué tan buena es tu memoria fotográfica? ¡Encuentra la ubicación!';
+        function limpiarUsuario() { document.querySelectorAll('.celda-sudoku').forEach(i => { if(!i.readOnly) i.value = ''; }); actualizarUI(); }
+        
+        function compartirJuego() { 
+            const url = "https://leonidasnamegomez.github.io/Sudo44/"; 
             if (navigator.share) {
-                navigator.share({ title: shareTitle, text: shareText, url: url }).catch(() => {});
+                navigator.share({ title: 'SUDO44', text: '¡Acepta el reto de Leonidas Name!', url: url }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(url);
+                navigator.clipboard.writeText(url); 
                 alert("¡Enlace copiado!");
             }
         }
 
-        setTimeout(() => {
-            document.getElementById('pantalla-carga').style.display = 'none';
-            document.getElementById('pantalla-menu').style.display = 'flex';
+        setTimeout(() => { 
+            document.getElementById('pantalla-carga').style.display = 'none'; 
+            document.getElementById('pantalla-menu').style.display = 'flex'; 
         }, 3000);
     </script>
 </body>
